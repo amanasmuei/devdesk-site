@@ -74,6 +74,10 @@ loginBtn.addEventListener('click',async()=>{
   loginMsg.textContent='Check your inbox for a login link.';
 });
 
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function statusLabel(s){
   return({submitted:'Submitted',quoted:'Quoted',in_progress:'In progress',
     delivered:'Delivered',declined:'Declined'})[s]||s;
@@ -84,7 +88,7 @@ function renderRequests(rows){
   if(rows.length===0){el.innerHTML='<p class="sub">No requests yet.</p>';return;}
   el.innerHTML=rows.map(r=>`
     <div class="card">
-      <div class="row"><h3>${r.service}</h3><span class="badge">${statusLabel(r.status)}</span></div>
+      <div class="row"><h3>${escapeHtml(r.service)}</h3><span class="badge">${statusLabel(r.status)}</span></div>
       <div class="meta">Submitted ${new Date(r.created_at).toLocaleDateString()}</div>
       ${r.quote_price!=null?`<div class="quote">Quote: RM${r.quote_price}${r.quote_date?' · by '+new Date(r.quote_date).toLocaleDateString():''}</div>`:''}
     </div>`).join('');
