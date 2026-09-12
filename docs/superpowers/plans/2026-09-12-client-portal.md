@@ -35,7 +35,7 @@ The spec's "claim" access-control section describes a client-side UPDATE policy 
 **Interfaces:**
 - Produces: tables `public.profiles(id, is_admin, created_at)` and `public.requests(id, client_id, email, name, service, urgency, details, status, quote_price, quote_date, admin_notes, created_at, updated_at)`; RPC functions `public.is_admin() returns boolean` and `public.claim_requests() returns void`, both callable via `supabase.rpc(...)` from the `authenticated` role. Tasks 3-5 consume all of the above.
 
-- [ ] **Step 1: Write the schema SQL**
+- [x] **Step 1: Write the schema SQL**
 
 Create `supabase/schema.sql`:
 
@@ -155,7 +155,7 @@ $$;
 grant execute on function public.claim_requests() to authenticated;
 ```
 
-- [ ] **Step 2: Write the setup runbook**
+- [x] **Step 2: Write the setup runbook**
 
 Create `supabase/README.md`:
 
@@ -192,7 +192,7 @@ both with RLS enabled (a lock icon next to the table name). Database →
 Functions shows `is_admin`, `claim_requests`, `handle_new_user`,
 `set_updated_at`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add supabase/schema.sql supabase/README.md
@@ -212,7 +212,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Consumes: the Supabase Project URL and anon public key from Task 1's dashboard (filled in manually by whoever runs this step, per `supabase/README.md`).
 - Produces: global function `getSupabaseClient(): SupabaseClient`, used by `index.html`, `portal.html`, `admin.html` (Tasks 3-5). Requires the global `supabase` object from the CDN script tag to already be loaded on the page before this file is loaded.
 
-- [ ] **Step 1: Write the config file**
+- [x] **Step 1: Write the config file**
 
 Create `supabase-config.js`:
 
@@ -258,7 +258,7 @@ no thrown JS error in the console, and `error` is `null` (an empty
 `requests` table still returns `data`, just an empty/zero result).
 Delete `test.html` afterward.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add supabase-config.js
@@ -278,7 +278,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Consumes: `getSupabaseClient()` from Task 2.
 - Produces: a row in `public.requests` per wizard submission, and a magic-link sign-in attempt for the submitting email — consumed by Task 4 (portal) and Task 5 (admin) for end-to-end verification.
 
-- [ ] **Step 1: Add the CDN and config script tags**
+- [x] **Step 1: Add the CDN and config script tags**
 
 In `index.html`, immediately before the existing closing `<script>` block
 (the one starting with `/* nav solidify on scroll */`), add:
@@ -288,7 +288,7 @@ In `index.html`, immediately before the existing closing `<script>` block
 <script src="supabase-config.js"></script>
 ```
 
-- [ ] **Step 2: Replace `submitAll()`**
+- [x] **Step 2: Replace `submitAll()`**
 
 Replace the existing `submitAll` function (the one that builds a
 `URLSearchParams` body and `fetch`es `formspree.io`) with:
@@ -352,7 +352,7 @@ Verify: the button re-enables, the error message appears
 does NOT appear. Revert `supabase-config.js` back to the correct URL
 afterward.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add index.html
@@ -372,7 +372,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Consumes: `getSupabaseClient()` from Task 2; the `requests` table and `claim_requests()` RPC from Task 1; requires at least one submitted request (Task 3) to verify against.
 - Produces: nothing consumed by later tasks — this is a leaf page.
 
-- [ ] **Step 1: Write the portal page**
+- [x] **Step 1: Write the portal page**
 
 Create `portal.html`:
 
@@ -499,7 +499,7 @@ NOT show — the request from Task 3 appears with the correct service name
 and a "Submitted" badge. `admin_notes` is never shown anywhere on this
 page (it isn't in the select list above, by design).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add portal.html
@@ -519,7 +519,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Consumes: `getSupabaseClient()` from Task 2; `is_admin()` RPC and the `requests` table (admin update policy) from Task 1.
 - Produces: nothing consumed by later tasks — this is a leaf page.
 
-- [ ] **Step 1: Write the admin page**
+- [x] **Step 1: Write the admin page**
 
 Create `admin.html`:
 
@@ -707,7 +707,7 @@ Verify: the request now shows the `Quoted` badge and the quote price/date
 you set in Step 3 — `admin_notes` still does not appear anywhere on this
 page.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add admin.html
@@ -728,7 +728,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Consumes: everything from Tasks 1-5.
 - Produces: nothing — terminal task.
 
-- [ ] **Step 1: Confirm Formspree is fully gone**
+- [x] **Step 1: Confirm Formspree is fully gone**
 
 ```bash
 grep -ri formspree index.html
