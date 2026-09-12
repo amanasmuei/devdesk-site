@@ -200,23 +200,9 @@
       <h2>Tell us what you need</h2>
       <p class="section-sub">The more detail, the better the quote. Takes 2 minutes.</p>
 
-      <!-- ============================================================
-           HOW TO MAKE THE FORM WORK (2 options, both free):
-
-           OPTION A — Netlify (easiest):
-             1. Go to netlify.com -> sign up free
-             2. Drag this file's folder into Netlify (or use Netlify Drop)
-             3. The form works automatically (netlify attribute below).
-                Submissions appear in your Netlify dashboard under "Forms"
-                and can be emailed to you.
-
-           OPTION B — Formspree:
-             1. Go to formspree.io -> create a form -> copy your form ID
-             2. Replace the <form> tag below with:
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-                and delete the netlify attribute.
-      ============================================================ -->
-      <form name="project-request" method="POST" data-netlify="true" id="orderForm">
+      <!-- Form submits to Formspree; submissions are emailed to amanasmuei@gmail.com
+           and can also trigger a Telegram alert via Formspree webhooks. -->
+      <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="orderForm">
         <label for="name">Your name</label>
         <input type="text" id="name" name="name" placeholder="Jane Doe" required>
 
@@ -251,8 +237,7 @@
 
   <footer>
     DevDesk — You describe it, we build it.<br>
-    <!-- TODO: replace with your real contact -->
-    Questions? Email: <b>your-email@example.com</b>
+    Questions? Email: <b>amanasmuei@gmail.com</b>
   </footer>
 
 </div>
