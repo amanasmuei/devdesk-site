@@ -59,7 +59,7 @@
   @media(max-width:700px){nav .links a.navlink{display:none}}
 
   /* ---------- HERO ---------- */
-  header{position:relative;padding:104px 0 72px;text-align:center}
+  header.wrap{padding-top:110px;padding-bottom:80px;position:relative;text-align:center}
   .eyebrow{
     display:inline-flex;align-items:center;gap:9px;
     color:var(--muted);font-size:.82rem;font-weight:500;
@@ -79,7 +79,7 @@
   .micro{margin-top:22px;font-size:.84rem;color:var(--faint)}
 
   /* ---------- SECTION SHELL ---------- */
-  section{padding:88px 0;position:relative}
+  section.wrap{padding-top:96px;padding-bottom:96px;position:relative}
   .eyebrow-sm{
     text-align:center;font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
     color:var(--accent);margin-bottom:14px;
@@ -196,12 +196,29 @@
   .reveal.in{opacity:1;transform:none}
 
   @media(max-width:640px){
-    header{padding:64px 0 48px}
-    section{padding:60px 0}
-    .wizard-shell{padding:26px 20px;border-radius:16px}
-    .wizard-shell .q{font-size:1.2rem}
+    .wrap{padding-left:22px;padding-right:22px}
+    header.wrap{padding-top:72px;padding-bottom:60px}
+    section.wrap{padding-top:64px;padding-bottom:64px}
+    .eyebrow{margin-bottom:24px}
+    .sub{margin-top:20px;font-size:1.02rem}
+    .hero-ctas{margin-top:32px;gap:10px}
     .hero-ctas .btn{width:100%;text-align:center}
+    .micro{margin-top:26px}
+    .section-sub{margin-bottom:36px}
+    .grid{gap:12px}
+    .card{padding:24px 22px}
+    .steps{gap:12px}
+    .step{padding:22px 20px}
+    .wizard-shell{padding:28px 22px;border-radius:16px}
+    .wizard-shell .q{font-size:1.18rem}
+    .progress{margin-bottom:28px}
+    .choices{gap:10px}
+    .choice{padding:15px 16px}
     .wbtn{flex:1}
+    .wizard-actions{gap:10px;margin-top:26px}
+    details summary{padding:18px 2px}
+    .cta-inner{padding:60px 0}
+    footer{padding:36px 0 48px}
   }
   @media(prefers-reduced-motion:reduce){
     .reveal{opacity:1;transform:none;transition:none}
