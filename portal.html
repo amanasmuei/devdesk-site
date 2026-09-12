@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevDesk — Your requests</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c11; --surface:#10131b; --border:rgba(255,255,255,.07);
+    --text:#f4f6fb; --muted:#98a2b8; --faint:#667085;
+    --accent:#7c8cff; --radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:60px 24px}
+  h1{font-size:1.8rem;font-weight:800;letter-spacing:-.03em;margin-bottom:8px}
+  .sub{color:var(--muted);margin-bottom:32px}
+  input[type=email]{width:100%;background:var(--surface);border:1px solid var(--border);
+    color:var(--text);border-radius:12px;padding:15px 16px;font-size:16px;font-family:inherit;outline:none}
+  input:focus{border-color:var(--accent)}
+  .btn{margin-top:12px;display:inline-block;padding:13px 24px;border-radius:11px;font-weight:700;
+    background:#fff;color:#0a0c11;border:none;cursor:pointer;font-size:.93rem;font-family:inherit}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .msg{margin-top:14px;font-size:.88rem;color:var(--muted)}
+  .msg.error{color:#f97066}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px 22px;margin-bottom:12px}
+  .card .row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .card h3{font-size:1.02rem;font-weight:700}
+  .badge{font-size:.76rem;font-weight:600;padding:4px 10px;border-radius:999px;
+    background:rgba(124,140,255,.12);color:var(--accent);text-transform:capitalize}
+  .card .meta{color:var(--faint);font-size:.85rem;margin-top:6px}
+  .card .quote{margin-top:10px;font-size:.92rem;color:var(--text)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Your requests</h1>
+  <p class="sub">Log in with the email you used to submit a request.</p>
+
+  <div id="loginBox">
+    <input type="email" id="loginEmail" placeholder="you@example.com">
+    <button class="btn" id="loginBtn">Send login link</button>
+    <p class="msg" id="loginMsg"></p>
+  </div>
+
+  <div id="listBox" hidden>
+    <p class="sub" id="whoami"></p>
+    <div id="requests"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+const client=getSupabaseClient();
+const loginBox=document.getElementById('loginBox');
+const listBox=document.getElementById('listBox');
+const loginMsg=document.getElementById('loginMsg');
+const loginBtn=document.getElementById('loginBtn');
+
+loginBtn.addEventListener('click',async()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    loginMsg.classList.add('error');loginMsg.textContent="That email doesn't look right.";return;
+  }
+  loginBtn.disabled=true;loginMsg.classList.remove('error');loginMsg.textContent='Sending…';
+  const{error}=await client.auth.signInWithOtp({email});
+  loginBtn.disabled=false;
+  if(error){loginMsg.classList.add('error');loginMsg.textContent='Could not send link. Please try again.';return;}
+  loginMsg.textContent='Check your inbox for a login link.';
+});
+
+function statusLabel(s){
+  return({submitted:'Submitted',quoted:'Quoted',in_progress:'In progress',
+    delivered:'Delivered',declined:'Declined'})[s]||s;
+}
+
+function renderRequests(rows){
+  const el=document.getElementById('requests');
+  if(rows.length===0){el.innerHTML='<p class="sub">No requests yet.</p>';return;}
+  el.innerHTML=rows.map(r=>`
+    <div class="card">
+      <div class="row"><h3>${r.service}</h3><span class="badge">${statusLabel(r.status)}</span></div>
+      <div class="meta">Submitted ${new Date(r.created_at).toLocaleDateString()}</div>
+      ${r.quote_price!=null?`<div class="quote">Quote: RM${r.quote_price}${r.quote_date?' · by '+new Date(r.quote_date).toLocaleDateString():''}</div>`:''}
+    </div>`).join('');
+}
+
+async function loadPortal(user){
+  loginBox.hidden=true;listBox.hidden=false;
+  document.getElementById('whoami').textContent=`Logged in as ${user.email}`;
+  await client.rpc('claim_requests');
+  const{data,error}=await client.from('requests_view')
+    .select('id, service, status, quote_price, quote_date, created_at')
+    .order('created_at',{ascending:false});
+  if(error){document.getElementById('requests').innerHTML='<p class="msg error">Could not load your requests. Refresh to try again.</p>';return;}
+  renderRequests(data);
+}
+
+client.auth.onAuthStateChange((_e,session)=>{if(session&&session.user)loadPortal(session.user);});
+client.auth.getSession().then(({data})=>{if(data.session&&data.session.user)loadPortal(data.session.user);});
+</script>
+</body>
+</html>
