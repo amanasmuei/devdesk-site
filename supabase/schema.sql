@@ -75,18 +75,35 @@ create trigger requests_set_updated_at
   for each row execute function public.set_updated_at();
 
 -- Anyone (anon or authenticated) can submit a request — this is the public wizard.
+-- Only these fields are allowed at insert time; others are operator-set or auto-generated.
 create policy "requests_insert_public"
   on public.requests for insert
-  with check (true);
-
--- A row is visible to: its claimed client, its email owner pre-claim, or an admin.
-create policy "requests_select_own_or_admin"
-  on public.requests for select
-  using (
-    client_id = auth.uid()
-    or email = (auth.jwt() ->> 'email')
-    or public.is_admin()
+  with check (
+    client_id is null
+    and status = 'submitted'
+    and quote_price is null
+    and quote_date is null
+    and admin_notes is null
   );
+
+-- Revoke direct select; requests is read through requests_view instead.
+-- This allows the view to control column-level visibility (admin_notes hidden from non-admins).
+revoke select on public.requests from anon, authenticated;
+
+-- requests_view: security-definer view that nulls admin_notes for non-admins.
+-- Clients and admins query this view; Tasks 4-5 (portal.html, admin.html) use it for all reads.
+create view public.requests_view
+with (security_invoker = false) as
+select
+  id, client_id, email, name, service, urgency, details, status,
+  quote_price, quote_date, created_at, updated_at,
+  case when public.is_admin() then admin_notes else null end as admin_notes
+from public.requests
+where client_id = auth.uid()
+   or email = (auth.jwt() ->> 'email')
+   or public.is_admin();
+
+grant select on public.requests_view to authenticated;
 
 -- Only admins may update requests directly (status, quote, notes, etc).
 create policy "requests_update_admin"
