@@ -3,466 +3,416 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DevDesk — You Describe It. We Build It.</title>
-<meta name="description" content="Bug fixes, small websites, scripts and coding help. Describe what you need in 60 seconds — get a free quote within 24 hours. No calls, no commitment.">
+<title>DevDesk — You describe it. We build it.</title>
+<meta name="description" content="Bug fixes, small websites, scripts and coding help. Describe what you need in 60 seconds — get a fixed quote within 24 hours. No calls, no commitment.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#070b14; --bg2:#0b1120;
-    --card:rgba(255,255,255,.035); --border:rgba(255,255,255,.09);
-    --text:#eef2fa; --muted:#8e9bb4;
-    --accent:#5b8cff; --accent2:#8b5cf6; --ok:#34d399;
-    --radius:16px;
+    --bg:#0a0c11; --surface:#10131b; --surface2:#151926;
+    --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.13);
+    --text:#f4f6fb; --muted:#98a2b8; --faint:#667085;
+    --accent:#7c8cff; --accent-deep:#5d6ef3;
+    --radius:14px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg); color:var(--text); line-height:1.65;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg); color:var(--text); line-height:1.6;
     -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    font-feature-settings:"cv02","cv03";
   }
-  .wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  ::selection{background:rgba(124,140,255,.3)}
 
-  /* ambient background */
-  .orb{position:fixed;border-radius:50%;filter:blur(110px);opacity:.16;pointer-events:none;z-index:0}
-  .orb1{width:520px;height:520px;background:var(--accent);top:-180px;left:-120px;animation:drift 16s ease-in-out infinite alternate}
-  .orb2{width:460px;height:460px;background:var(--accent2);bottom:-160px;right:-120px;animation:drift 20s ease-in-out infinite alternate-reverse}
-  @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(60px,50px) scale(1.12)}}
+  /* subtle ambient glow — single, restrained */
+  .glow{
+    position:absolute;top:-260px;left:50%;transform:translateX(-50%);
+    width:900px;height:520px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(93,110,243,.16),transparent 70%);
+    pointer-events:none;
+  }
 
-  /* NAV */
+  /* ---------- NAV ---------- */
   nav{
     position:sticky;top:0;z-index:50;
-    background:rgba(7,11,20,.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    border-bottom:1px solid transparent;
-    transition:background .25s ease,border-color .25s ease;
+    background:rgba(10,12,17,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-bottom:1px solid transparent;transition:background .3s,border-color .3s;
   }
-  nav.scrolled{background:rgba(7,11,20,.88);border-bottom-color:var(--border)}
-  .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:19px 0}
-  .logo{font-weight:800;font-size:1.22rem;letter-spacing:-.6px;display:flex;align-items:center;gap:10px}
-  .logo .grad-text{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .logo .mark{
-    width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:.85rem;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-  }
-  nav .links{display:flex;gap:22px;align-items:center}
-  nav .links a{color:var(--muted);text-decoration:none;font-size:.92rem;transition:color .15s}
-  nav .links a:hover{color:var(--text)}
+  nav.scrolled{background:rgba(10,12,17,.85);border-bottom-color:var(--border)}
+  .nav-inner{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+  .wordmark{font-weight:800;font-size:1.18rem;letter-spacing:-.04em;color:var(--text);text-decoration:none}
+  nav .links{display:flex;gap:28px;align-items:center}
+  nav .links a.navlink{color:var(--muted);text-decoration:none;font-size:.92rem;font-weight:500;transition:color .15s}
+  nav .links a.navlink:hover{color:var(--text)}
   .btn{
-    display:inline-block;padding:13px 26px;border-radius:12px;font-weight:700;
-    text-decoration:none;font-size:.95rem;transition:transform .18s ease,box-shadow .18s ease,border-color .18s;
-    border:1px solid transparent;cursor:pointer;
+    display:inline-block;padding:11px 22px;border-radius:10px;font-weight:600;
+    text-decoration:none;font-size:.92rem;transition:all .18s;border:1px solid transparent;cursor:pointer;
+    letter-spacing:-.01em;
   }
-  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 6px 22px rgba(91,140,255,.35)}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(91,140,255,.45)}
-  .btn-ghost{border-color:var(--border);color:var(--text)}
-  .btn-ghost:hover{border-color:var(--accent)}
-  @media(max-width:640px){nav .links a:not(.btn){display:none}}
+  .btn-primary{background:#fff;color:#0a0c11}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,255,255,.12)}
+  .btn-ghost{border-color:var(--border2);color:var(--text)}
+  .btn-ghost:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.04)}
+  @media(max-width:700px){nav .links a.navlink{display:none}}
 
-  /* HERO */
-  header{position:relative;z-index:1;padding:88px 0 56px;text-align:center}
-  .pill{
-    display:inline-flex;align-items:center;gap:8px;
-    background:rgba(91,140,255,.1);color:#9db9ff;
-    border:1px solid rgba(91,140,255,.28);border-radius:999px;
-    padding:7px 16px;font-size:.82rem;font-weight:600;margin-bottom:26px;
+  /* ---------- HERO ---------- */
+  header{position:relative;padding:104px 0 72px;text-align:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;
+    color:var(--muted);font-size:.82rem;font-weight:500;
+    border:1px solid var(--border);border-radius:999px;padding:7px 16px;margin-bottom:30px;
+    background:rgba(255,255,255,.02);
   }
-  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
-  h1{font-size:clamp(2.2rem,6vw,3.7rem);font-weight:800;letter-spacing:-1.5px;line-height:1.12}
-  h1 .grad{background:linear-gradient(90deg,var(--accent) 10%,var(--accent2) 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .type-line{margin-top:14px;font-size:clamp(1rem,2.4vw,1.2rem);color:var(--muted);min-height:1.8em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  .type-line .cursor{display:inline-block;width:9px;background:var(--accent);animation:blink 1s step-end infinite;color:transparent;margin-left:2px}
-  @keyframes blink{50%{opacity:0}}
-  .sub{color:var(--muted);font-size:1.06rem;max-width:600px;margin:14px auto 0}
-  .hero-ctas{margin-top:36px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .trust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:36px}
-  .trust div{
-    background:var(--card);border:1px solid var(--border);border-radius:999px;
-    padding:8px 16px;font-size:.84rem;color:var(--muted)
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.7)}
+  h1{font-size:clamp(2.5rem,6.4vw,4.2rem);font-weight:800;letter-spacing:-.045em;line-height:1.06}
+  h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg,#9aa7ff,#7c8cff 45%,#b09aff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
-  .trust b{color:var(--ok);font-weight:600}
+  .sub{color:var(--muted);font-size:1.1rem;max-width:520px;margin:22px auto 0;font-weight:400}
+  .sub b{color:var(--text);font-weight:600}
+  .hero-ctas{margin-top:38px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .micro{margin-top:22px;font-size:.84rem;color:var(--faint)}
 
-  /* STATS */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:64px 0 8px}
-  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;text-align:center}
-  .stat .num{font-size:1.9rem;font-weight:800;letter-spacing:-1px;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stat .lbl{font-size:.82rem;color:var(--muted);margin-top:2px}
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:88px 0;position:relative}
+  .eyebrow-sm{
+    text-align:center;font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:14px;
+  }
+  h2{font-size:clamp(1.7rem,3.6vw,2.3rem);font-weight:800;letter-spacing:-.035em;text-align:center}
+  .section-sub{text-align:center;color:var(--muted);margin:12px auto 52px;max-width:480px;font-size:1rem}
 
-  /* SECTIONS */
-  section{position:relative;z-index:1;padding:64px 0}
-  h2{font-size:clamp(1.5rem,3.5vw,2rem);font-weight:800;letter-spacing:-.8px;text-align:center;margin-bottom:8px}
-  .section-sub{text-align:center;color:var(--muted);margin-bottom:40px;max-width:520px;margin-left:auto;margin-right:auto}
-
-  /* SERVICES */
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  /* ---------- SERVICES ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
   .card{
-    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-    padding:26px;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
-    position:relative;overflow:hidden;
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:28px 26px;transition:border-color .2s,transform .2s,background .2s;
   }
-  .card::before{
-    content:"";position:absolute;inset:0;opacity:0;transition:opacity .25s;
-    background:radial-gradient(420px at var(--mx,50%) var(--my,0%),rgba(91,140,255,.14),transparent 65%);
-  }
-  .card:hover{transform:translateY(-4px);border-color:rgba(91,140,255,.45);box-shadow:0 14px 34px rgba(0,0,0,.35)}
-  .card>*{position:relative}
-  .card .icon{
-    width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;
-    background:linear-gradient(135deg,rgba(91,140,255,.18),rgba(139,92,246,.18));
-    border:1px solid rgba(91,140,255,.25);margin-bottom:14px;
-  }
-  .card h3{font-size:1.05rem;margin-bottom:6px}
-  .card p{color:var(--muted);font-size:.92rem}
-  .card .tag{
-    display:inline-block;margin-top:14px;font-size:.74rem;font-weight:600;color:#9db9ff;
-    background:rgba(91,140,255,.1);border:1px solid rgba(91,140,255,.22);border-radius:6px;padding:3px 9px;
-  }
+  .card:hover{border-color:var(--border2);transform:translateY(-3px);background:var(--surface2)}
+  .card .kicker{font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .card h3{font-size:1.06rem;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:.92rem;line-height:1.65}
+  .card .meta{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);font-size:.82rem;color:var(--faint)}
 
-  /* HOW IT WORKS — timeline */
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;position:relative}
-  .step{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;position:relative}
-  .step .num{
-    display:inline-flex;align-items:center;justify-content:center;
-    width:38px;height:38px;border-radius:50%;font-weight:800;font-size:.95rem;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;margin-bottom:14px;
-    box-shadow:0 4px 14px rgba(91,140,255,.4);
+  /* ---------- PROCESS ---------- */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;counter-reset:step}
+  .step{
+    background:transparent;border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px;position:relative;
   }
-  .step h3{font-size:1rem;margin-bottom:4px}
+  .step::before{
+    counter-increment:step;content:"0" counter(step);
+    font-size:.8rem;font-weight:700;color:var(--accent);letter-spacing:.05em;
+    display:block;margin-bottom:16px;
+  }
+  .step h3{font-size:1rem;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
   .step p{color:var(--muted);font-size:.9rem}
 
-  /* FAQ */
-  .faq{max-width:680px;margin:0 auto}
-  details{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:18px 20px;margin-bottom:10px;transition:border-color .2s;
+  /* ---------- WIZARD ---------- */
+  .wizard-shell{
+    background:var(--surface);border:1px solid var(--border);border-radius:20px;
+    padding:44px;max-width:640px;margin:0 auto;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
   }
-  details[open]{border-color:rgba(91,140,255,.4)}
-  summary{font-weight:600;font-size:.97rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
-  summary::-webkit-details-marker{display:none}
-  summary .chev{transition:transform .2s;color:var(--muted);flex-shrink:0}
-  details[open] summary .chev{transform:rotate(180deg)}
-  details p{color:var(--muted);font-size:.92rem;margin-top:10px}
-
-  /* WIZARD */
-  .wizard-card{
-    background:rgba(13,19,34,.85);backdrop-filter:blur(10px);
-    border:1px solid var(--border);border-radius:22px;
-    padding:38px;max-width:660px;margin:0 auto;box-shadow:0 24px 60px rgba(0,0,0,.4);
-  }
-  .progress{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-bottom:30px}
-  .progress .bar{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s cubic-bezier(.4,0,.2,1)}
-  .step-count{font-size:.78rem;color:var(--muted);margin-bottom:18px;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
-  .q{font-size:1.35rem;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
-  .qhelp{color:var(--muted);font-size:.92rem;margin-bottom:22px}
-  .choices{display:grid;gap:10px}
+  .progress{height:4px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:34px}
+  .progress .bar{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--accent-deep),var(--accent));transition:width .45s cubic-bezier(.4,0,.2,1)}
+  .step-label{font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:16px}
+  .q{font-size:1.42rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+  .qhelp{color:var(--muted);font-size:.92rem;margin-bottom:26px}
+  .choices{display:grid;gap:8px}
   .choice{
-    background:var(--card);border:1px solid var(--border);border-radius:14px;
-    padding:16px 18px;cursor:pointer;transition:all .18s;display:flex;gap:14px;align-items:center;text-align:left;
-    color:var(--text);font-size:.97rem;width:100%;
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+    padding:16px 18px;cursor:pointer;transition:all .16s;text-align:left;
+    color:var(--text);font-size:.96rem;font-weight:500;width:100%;font-family:inherit;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
   }
-  .choice:hover{border-color:var(--accent);background:rgba(91,140,255,.07);transform:translateX(4px)}
-  .choice .emoji{font-size:1.35rem}
-  .choice small{display:block;color:var(--muted);font-size:.82rem}
+  .choice:hover{border-color:var(--accent);background:rgba(124,140,255,.06)}
+  .choice small{display:block;color:var(--faint);font-size:.82rem;font-weight:400;margin-top:2px}
+  .choice .arr{color:var(--faint);font-size:.9rem;transition:transform .16s,color .16s;flex-shrink:0}
+  .choice:hover .arr{transform:translateX(3px);color:var(--accent)}
   input[type=text],input[type=email],textarea{
-    width:100%;background:rgba(7,11,20,.7);border:1px solid var(--border);
+    width:100%;background:var(--bg);border:1px solid var(--border);
     color:var(--text);border-radius:12px;padding:15px 16px;font-size:16px;
     font-family:inherit;outline:none;transition:border-color .18s,box-shadow .18s;
   }
-  @media(max-width:640px){
-    input[type=text],input[type=email],textarea{font-size:16px}
-    .type-line{min-height:1.6em}
-  }
-  input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,140,255,.15)}
+  input::placeholder,textarea::placeholder{color:var(--faint)}
+  input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,140,255,.14)}
   textarea{min-height:140px;resize:vertical}
-  .wizard-actions{display:flex;gap:10px;margin-top:22px}
+  .wizard-actions{display:flex;gap:10px;margin-top:24px}
   .wbtn{
-    padding:13px 24px;border-radius:11px;font-weight:700;font-size:.95rem;cursor:pointer;
-    border:1px solid var(--border);background:var(--card);color:var(--text);transition:all .18s;
+    padding:13px 24px;border-radius:11px;font-weight:600;font-size:.93rem;cursor:pointer;
+    border:1px solid var(--border2);background:transparent;color:var(--text);transition:all .16s;font-family:inherit;
   }
-  .wbtn:hover{border-color:var(--muted)}
-  .wbtn-next{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;color:#fff;box-shadow:0 6px 18px rgba(91,140,255,.35)}
-  .wbtn-next:hover{transform:translateY(-1px)}
+  .wbtn:hover{border-color:rgba(255,255,255,.3)}
+  .wbtn-next{background:#fff;border:none;color:#0a0c11;font-weight:700}
+  .wbtn-next:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,255,255,.12)}
   .wbtn-next:disabled{opacity:.4;cursor:not-allowed;transform:none}
-  .err{color:#f87171;font-size:.83rem;margin-top:8px;min-height:1.2em}
-  .wizard-step{display:none;animation:slidein .35s ease}
+  .err{color:#f97066;font-size:.84rem;margin-top:10px;min-height:1.3em}
+  .wizard-step{display:none;animation:slidein .3s ease}
   .wizard-step.active{display:block}
-  @keyframes slidein{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
-  .success{display:none;text-align:center;padding:30px 10px}
-  .success .big{font-size:3rem;margin-bottom:14px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
-  @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-  .success h3{margin-bottom:8px;font-size:1.3rem}
+  @keyframes slidein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .success{display:none;text-align:center;padding:26px 6px}
+  .success h3{margin-bottom:10px;font-size:1.5rem;font-weight:800;letter-spacing:-.03em}
   .success p{color:var(--muted)}
+  .success .ring{
+    width:64px;height:64px;border-radius:50%;margin:0 auto 22px;display:grid;place-items:center;
+    background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#4ade80;font-size:1.5rem;
+    animation:pop .45s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
 
-  /* reveal on scroll */
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+  /* ---------- FAQ ---------- */
+  .faq{max-width:660px;margin:0 auto}
+  details{border-bottom:1px solid var(--border);padding:4px 0}
+  details:first-child{border-top:1px solid var(--border)}
+  summary{
+    font-weight:600;font-size:1rem;cursor:pointer;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;padding:20px 4px;
+    transition:color .15s;
+  }
+  summary:hover{color:var(--accent)}
+  summary::-webkit-details-marker{display:none}
+  summary .plus{color:var(--faint);font-weight:400;font-size:1.3rem;transition:transform .2s;flex-shrink:0}
+  details[open] summary .plus{transform:rotate(45deg)}
+  details p{color:var(--muted);font-size:.93rem;padding:0 4px 22px;max-width:560px}
+
+  /* ---------- CTA STRIP + FOOTER ---------- */
+  .cta-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,.015)}
+  .cta-inner{display:flex;flex-direction:column;align-items:center;text-align:center;padding:72px 0}
+  .cta-inner h2{margin-bottom:10px}
+  .cta-inner p{color:var(--muted);margin-bottom:30px}
+  footer{padding:44px 0 56px;text-align:left;color:var(--faint);font-size:.85rem}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer a{color:var(--muted);text-decoration:none}
+  footer a:hover{color:var(--text)}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}
   .reveal.in{opacity:1;transform:none}
+
   @media(max-width:640px){
-    header{padding:52px 0 36px}
+    header{padding:64px 0 48px}
+    section{padding:60px 0}
+    .wizard-shell{padding:26px 20px;border-radius:16px}
+    .wizard-shell .q{font-size:1.2rem}
     .hero-ctas .btn{width:100%;text-align:center}
-    .wizard-card{padding:22px 18px;border-radius:16px}
-    .wizard-card .q{font-size:1.15rem}
-    .progress{margin-bottom:22px}
-    .choice{padding:14px;gap:11px}
-    .choice:active{transform:scale(.98);background:rgba(91,140,255,.12)}
     .wbtn{flex:1}
-    .wizard-actions{gap:8px}
-    .stats{gap:10px}
-    .stat{padding:16px 10px}
-    .stat .num{font-size:1.5rem}
-    section{padding:46px 0}
-    details{padding:14px 16px}
-    nav .btn{padding:10px 16px;font-size:.85rem}
-    .trust div{font-size:.78rem;padding:7px 12px}
   }
   @media(prefers-reduced-motion:reduce){
     .reveal{opacity:1;transform:none;transition:none}
-    .orb,.pill .dot,.type-line .cursor{animation:none}
     html{scroll-behavior:auto}
+    *{animation:none!important;transition:none!important}
   }
-
-  footer{
-    position:relative;z-index:1;padding:44px 0 64px;text-align:center;color:var(--muted);
-    font-size:.85rem;border-top:1px solid var(--border);margin-top:48px;
-  }
-  footer a{color:#9db9ff;text-decoration:none}
 </style>
 </head>
 <body>
 
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-
 <nav id="topnav">
   <div class="wrap nav-inner">
-    <div class="logo"><span class="mark">&lt;/&gt;</span><span class="grad-text">DevDesk</span></div>
+    <a class="wordmark" href="#top">DevDesk</a>
     <div class="links">
-      <a href="#services">Services</a>
-      <a href="#how">How it works</a>
-      <a href="#faq">FAQ</a>
-      <a class="btn btn-primary" href="#order">Start free request</a>
+      <a class="navlink" href="#services">Services</a>
+      <a class="navlink" href="#process">Process</a>
+      <a class="navlink" href="#faq">FAQ</a>
+      <a class="btn btn-primary" href="#order">Get a free quote</a>
     </div>
   </div>
 </nav>
 
-<header class="wrap">
-  <div class="pill"><span class="dot"></span>Accepting new projects — quotes within 24h</div>
-  <h1>You describe it.<br><span class="grad">We build it.</span></h1>
-  <div class="type-line"><span id="typed"></span><span class="cursor">|</span></div>
+<header class="wrap" id="top">
+  <div class="glow"></div>
+  <div class="eyebrow"><span class="dot"></span>Accepting new projects</div>
+  <h1>You describe it.<br><em>We build it.</em></h1>
   <p class="sub">
-    Bug driving you crazy? Need a website, a script, or coding help?
-    Describe what you need below — get a fixed quote within 24 hours.
-    No calls. No meetings. No pushy sales talk.
+    Websites, bug fixes, scripts and coding help — with a <b>fixed quote in 24 hours</b>.
+    Everything in writing. No calls, no meetings, no pressure.
   </p>
   <div class="hero-ctas">
-    <a class="btn btn-primary" href="#order">Describe your project →</a>
-    <a class="btn btn-ghost" href="#services">What we build</a>
+    <a class="btn btn-primary" href="#order">Start a request</a>
+    <a class="btn btn-ghost" href="#services">Explore services</a>
   </div>
-  <div class="trust">
-    <div>✓ <b>Free quote</b> within 24h</div>
-    <div>✓ Pay <b>after you see it work</b></div>
-    <div>✓ 100% online — <b>zero meetings</b></div>
-  </div>
-
-  <div class="stats reveal">
-    <div class="stat"><div class="num" data-count="24">0</div><div class="lbl">Hour quote turnaround</div></div>
-    <div class="stat"><div class="num" data-count="100">0</div><div class="lbl">% online, no meetings</div></div>
-    <div class="stat"><div class="num" data-count="1">0</div><div class="lbl">Round of revisions included</div></div>
-    <div class="stat"><div class="num" data-count="0">0</div><div class="lbl">Ringgit to get a quote</div></div>
-  </div>
+  <p class="micro">Free to ask · Pay only after you see the work · Quote within 24h</p>
 </header>
 
 <section id="services" class="wrap">
+  <div class="eyebrow-sm reveal">Services</div>
   <h2 class="reveal">What we build</h2>
-  <p class="section-sub reveal">Simple, honest coding help — nothing overcomplicated, nothing overpromised.</p>
+  <p class="section-sub reveal">Focused scope, honest timelines, and work you can verify before paying.</p>
   <div class="grid">
     <div class="card reveal">
-      <div class="icon">🐛</div>
+      <div class="kicker">Fix</div>
       <h3>Bug fixes &amp; debugging</h3>
-      <p>Error you can't solve? Code breaking before a deadline? Send it over — we fix it and explain what went wrong.</p>
-      <span class="tag">From smallest fix</span>
+      <p>Broken code, cryptic errors, deadline around the corner. Send it over — we diagnose, fix, and explain what went wrong.</p>
+      <div class="meta">Most fixes returned within 48h</div>
     </div>
     <div class="card reveal">
-      <div class="icon">🌐</div>
+      <div class="kicker">Build</div>
       <h3>Websites &amp; landing pages</h3>
-      <p>Clean, fast, mobile-friendly pages for your business, portfolio, or event. You describe the vibe, we handle the code.</p>
-      <span class="tag">Live in days, not weeks</span>
+      <p>Clean, fast, mobile-friendly pages for your business, portfolio, or event. You describe the vibe; we handle everything technical.</p>
+      <div class="meta">Live in days, not weeks</div>
     </div>
     <div class="card reveal">
-      <div class="icon">⚙️</div>
+      <div class="kicker">Automate</div>
       <h3>Scripts &amp; automation</h3>
-      <p>Tired of repetitive tasks? Small tools and scripts that do the boring work for you, your way.</p>
-      <span class="tag">Save hours every week</span>
+      <p>Small tools and scripts that take over repetitive work — file handling, data entry, reports — built your way.</p>
+      <div class="meta">Give the boring work to a machine</div>
     </div>
     <div class="card reveal">
-      <div class="icon">🎓</div>
+      <div class="kicker">Learn</div>
       <h3>Assignments &amp; tutoring</h3>
-      <p>Stuck on a programming assignment? We build it with you and explain every line, so you actually learn it.</p>
-      <span class="tag">Learn while you ship</span>
+      <p>Stuck on coursework? We build it with you and walk through every line, so you understand it well enough to defend it.</p>
+      <div class="meta">Explanation always included</div>
     </div>
   </div>
 </section>
 
-<section id="how" class="wrap">
-  <h2 class="reveal">How it works</h2>
-  <p class="section-sub reveal">Three steps. Zero phone calls. You never have to talk to anyone.</p>
+<section id="process" class="wrap">
+  <div class="eyebrow-sm reveal">Process</div>
+  <h2 class="reveal">Simple by design</h2>
+  <p class="section-sub reveal">Three steps, fully in writing. You never have to talk to anyone.</p>
   <div class="steps">
     <div class="step reveal">
-      <div class="num">1</div>
       <h3>Describe it</h3>
-      <p>Answer 4 quick questions below. Paste your error, sketch your idea, or explain it in plain words.</p>
+      <p>Answer four quick questions in the form below. Paste errors, sketch ideas, or write it in plain words.</p>
     </div>
     <div class="step reveal">
-      <div class="num">2</div>
-      <h3>Get your quote</h3>
-      <p>Within 24 hours you get a fixed price and delivery date by email. Like it or walk away — no pressure.</p>
+      <h3>Get a fixed quote</h3>
+      <p>Within 24 hours you receive a fixed price and delivery date by email. Accept it or walk away — completely free.</p>
     </div>
     <div class="step reveal">
-      <div class="num">3</div>
-      <h3>Approve the work</h3>
-      <p>We build it, you check it works, then you pay. Simple, safe, and fair.</p>
+      <h3>Approve, then pay</h3>
+      <p>We build it. You verify it works — live preview or recording. Only then do you pay via DuitNow / TnG.</p>
     </div>
   </div>
 </section>
 
 <section id="order" class="wrap">
-  <div class="wizard-card reveal">
+  <div class="eyebrow-sm reveal">Start here</div>
+  <h2 class="reveal">Tell us what you need</h2>
+  <p class="section-sub reveal">Takes about 60 seconds. Your quote arrives by email within 24 hours.</p>
+
+  <div class="wizard-shell reveal">
     <div class="progress"><div class="bar" id="bar"></div></div>
 
     <div class="wizard-step active" data-step="0">
-      <div class="step-count">Question 1 of 4</div>
-      <div class="q">Hey 👋 What do you need help with?</div>
-      <div class="qhelp">Pick the closest match — details come later.</div>
+      <div class="step-label">Step 1 of 4</div>
+      <div class="q">What do you need help with?</div>
+      <div class="qhelp">Pick the closest match — details come next.</div>
       <div class="choices">
-        <button class="choice" data-val="Bug fix / debugging"><span class="emoji">🐛</span><span>Bug fix / debugging<small>Something is broken and I need it working</small></span></button>
-        <button class="choice" data-val="Website / landing page"><span class="emoji">🌐</span><span>Website / landing page<small>I need a page or small site built</small></span></button>
-        <button class="choice" data-val="Script / automation"><span class="emoji">⚙️</span><span>Script / automation<small>I want to automate a boring task</small></span></button>
-        <button class="choice" data-val="Assignment / tutoring"><span class="emoji">🎓</span><span>Assignment / tutoring<small>I'm stuck on coursework and need help</small></span></button>
-        <button class="choice" data-val="Something else"><span class="emoji">✨</span><span>Something else<small>I'll explain it myself</small></span></button>
+        <button class="choice" data-val="Bug fix / debugging"><span>Bug fix / debugging<small>Something is broken and needs to work</small></span><span class="arr">→</span></button>
+        <button class="choice" data-val="Website / landing page"><span>Website / landing page<small>A page or small site, built from scratch</small></span><span class="arr">→</span></button>
+        <button class="choice" data-val="Script / automation"><span>Script / automation<small>Automate a repetitive task</small></span><span class="arr">→</span></button>
+        <button class="choice" data-val="Assignment / tutoring"><span>Assignment / tutoring<small>Coursework help, with explanations</small></span><span class="arr">→</span></button>
+        <button class="choice" data-val="Something else"><span>Something else<small>I'll describe it myself</small></span><span class="arr">→</span></button>
       </div>
     </div>
 
     <div class="wizard-step" data-step="1">
-      <div class="step-count">Question 2 of 4</div>
+      <div class="step-label">Step 2 of 4</div>
       <div class="q">Tell us what's going on.</div>
       <div class="qhelp">Plain words are perfect. Paste error messages if you have them.</div>
-      <textarea id="w-details" placeholder="e.g. My Python script crashes with KeyError after a few minutes. It worked before. Need it fixed by Friday."></textarea>
+      <textarea id="w-details" placeholder="e.g. My Python script crashes with a KeyError after a few minutes. It worked before. I need it fixed by Friday."></textarea>
       <div class="err" id="err1"></div>
       <div class="wizard-actions">
-        <button class="wbtn" onclick="goStep(0)">← Back</button>
-        <button class="wbtn wbtn-next" onclick="checkDetails()">Continue →</button>
+        <button class="wbtn" onclick="goStep(0)">Back</button>
+        <button class="wbtn wbtn-next" onclick="checkDetails()">Continue</button>
       </div>
     </div>
 
     <div class="wizard-step" data-step="2">
-      <div class="step-count">Question 3 of 4</div>
+      <div class="step-label">Step 3 of 4</div>
       <div class="q">When do you need it?</div>
       <div class="qhelp">Honest answers get honest schedules.</div>
       <div class="choices">
-        <button class="choice" data-val="ASAP — within days"><span class="emoji">🔥</span><span>ASAP<small>Within the next few days</small></span></button>
-        <button class="choice" data-val="Within 1–2 weeks"><span class="emoji">📅</span><span>Within 1–2 weeks<small>Soon, but not urgent</small></span></button>
-        <button class="choice" data-val="Flexible"><span class="emoji">🧘</span><span>Flexible<small>No rush — quality first</small></span></button>
+        <button class="choice" data-val="ASAP — within days"><span>ASAP<small>Within the next few days</small></span><span class="arr">→</span></button>
+        <button class="choice" data-val="Within 1–2 weeks"><span>Within 1–2 weeks<small>Soon, but not urgent</small></span><span class="arr">→</span></button>
+        <button class="choice" data-val="Flexible"><span>Flexible<small>No rush — quality first</small></span><span class="arr">→</span></button>
       </div>
-      <div class="wizard-actions"><button class="wbtn" onclick="goStep(1)">← Back</button></div>
+      <div class="wizard-actions"><button class="wbtn" onclick="goStep(1)">Back</button></div>
     </div>
 
     <div class="wizard-step" data-step="3">
-      <div class="step-count">Last step 🎉</div>
+      <div class="step-label">Step 4 of 4</div>
       <div class="q">Where should we send your quote?</div>
       <div class="qhelp">No spam, no newsletter — just your quote.</div>
       <input type="text" id="w-name" placeholder="Your name" style="margin-bottom:12px">
       <input type="email" id="w-email" placeholder="you@example.com">
       <div class="err" id="err2"></div>
       <div class="wizard-actions">
-        <button class="wbtn" onclick="goStep(2)">← Back</button>
-        <button class="wbtn wbtn-next" id="submitBtn" onclick="submitAll()">Get my free quote ✨</button>
+        <button class="wbtn" onclick="goStep(2)">Back</button>
+        <button class="wbtn wbtn-next" id="submitBtn" onclick="submitAll()">Get my free quote</button>
       </div>
     </div>
 
     <div class="success" id="successMsg">
-      <div class="big">🚀</div>
-      <h3>Request sent!</h3>
+      <div class="ring">✓</div>
+      <h3>Request sent</h3>
       <p>Check your inbox within 24 hours for your fixed quote.<br>Sit tight — you've done your part.</p>
     </div>
   </div>
 </section>
 
 <section id="faq" class="wrap">
+  <div class="eyebrow-sm reveal">FAQ</div>
   <h2 class="reveal">Questions, answered</h2>
-  <p class="section-sub reveal">The stuff everyone asks before their first request.</p>
+  <p class="section-sub reveal">The things everyone asks before their first request.</p>
   <div class="faq reveal">
     <details>
-      <summary>How much does it cost? <span class="chev">▾</span></summary>
-      <p>It depends on the job — that's exactly why we quote first. You get a fixed price before any work starts, and it never changes mid-project. Small fixes start from pocket-money rates; bigger builds are quoted fairly.</p>
+      <summary>How much does it cost? <span class="plus">+</span></summary>
+      <p>It depends on the job — which is exactly why we quote first. You get a fixed price before any work starts, and it never changes mid-project.</p>
     </details>
     <details>
-      <summary>When do I pay? <span class="chev">▾</span></summary>
-      <p>After you've seen the work functioning — a live preview or a screen recording. You confirm it does what you asked, then pay via DuitNow / TnG. No deposits for small jobs.</p>
+      <summary>When do I pay? <span class="plus">+</span></summary>
+      <p>After you've seen the work functioning — a live preview or screen recording. You confirm it does what you asked, then pay via DuitNow / TnG. No deposits on small jobs.</p>
     </details>
     <details>
-      <summary>What if I don't like the quote? <span class="chev">▾</span></summary>
+      <summary>What if I don't like the quote? <span class="plus">+</span></summary>
       <p>Then you walk away — completely free. Requesting a quote costs nothing and commits you to nothing.</p>
     </details>
     <details>
-      <summary>Do we need to meet or call? <span class="chev">▾</span></summary>
-      <p>Never. Everything happens in writing — this form and email. That's not a limitation, it's the design: clearer requirements, better records, zero awkward calls.</p>
+      <summary>Do we need to meet or call? <span class="plus">+</span></summary>
+      <p>Never. Everything happens in writing. Clearer requirements, better records, zero awkward calls.</p>
     </details>
     <details>
-      <summary>What if it breaks after delivery? <span class="chev">▾</span></summary>
-      <p>Every job includes one free revision round after you test it. If something we built stops working as delivered, we fix it.</p>
+      <summary>What if it breaks after delivery? <span class="plus">+</span></summary>
+      <p>Every job includes one free revision round after you test. If something we built stops working as delivered, we fix it.</p>
     </details>
   </div>
 </section>
 
-<footer class="wrap">
-  DevDesk — You describe it, we build it.<br>
-  Questions? Email <a href="mailto:amanasmuei@gmail.com">amanasmuei@gmail.com</a>
+<div class="cta-strip">
+  <div class="wrap cta-inner reveal">
+    <h2>Have something in mind?</h2>
+    <p>Describe it now — the quote is free and arrives within 24 hours.</p>
+    <a class="btn btn-primary" href="#order">Start a request</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <span><b style="color:var(--text);font-weight:700">DevDesk</b> — You describe it, we build it.</span>
+    <span>Questions? <a href="mailto:amanasmuei@gmail.com">amanasmuei@gmail.com</a></span>
+  </div>
 </footer>
 
 <script>
-/* ---------- nav: solidify on scroll ---------- */
+/* nav solidify on scroll */
 const navEl=document.getElementById('topnav');
 const onScroll=()=>navEl.classList.toggle('scrolled',window.scrollY>12);
 window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
 
-/* ---------- typed hero line ---------- */
-const phrases = ['websites.','bug fixes.','automation scripts.','landing pages.','your assignment.','browser tools.'];
-let pi=0, ci=0, deleting=false;
-const typedEl = document.getElementById('typed');
-(function type(){
-  const p = phrases[pi];
-  typedEl.textContent = deleting ? p.slice(0,--ci) : p.slice(0,++ci);
-  let d = deleting ? 38 : 75;
-  if(!deleting && ci===p.length){ deleting=true; d=1600; }
-  else if(deleting && ci===0){ deleting=false; pi=(pi+1)%phrases.length; d=350; }
-  setTimeout(type,d);
-})();
-
-/* ---------- scroll reveal ---------- */
-const io = new IntersectionObserver(es=>es.forEach(e=>{
-  if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-}),{threshold:.12});
+/* scroll reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+}),{threshold:.1});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-/* ---------- animated counters ---------- */
-const cio = new IntersectionObserver(es=>es.forEach(e=>{
-  if(!e.isIntersecting) return;
-  const el=e.target, target=+el.dataset.count, t0=performance.now(), dur=1200;
-  (function tick(t){
-    const k=Math.min((t-t0)/dur,1);
-    el.textContent=Math.round(target*(1-Math.pow(1-k,3)));
-    if(k<1) requestAnimationFrame(tick);
-  })(t0);
-  cio.unobserve(el);
-}),{threshold:.5});
-document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
-
-/* ---------- card spotlight ---------- */
-document.querySelectorAll('.card').forEach(c=>c.addEventListener('mousemove',e=>{
-  const r=c.getBoundingClientRect();
-  c.style.setProperty('--mx',(e.clientX-r.left)+'px');
-  c.style.setProperty('--my',(e.clientY-r.top)+'px');
-}));
-
-/* ---------- wizard ---------- */
+/* wizard */
 const TOTAL=4;
 const state={service:'',details:'',urgency:'',name:'',email:''};
 function goStep(n){
@@ -470,44 +420,40 @@ function goStep(n){
   document.getElementById('bar').style.width=(n/TOTAL*100)+'%';
   document.querySelector('#order').scrollIntoView({behavior:'smooth',block:'start'});
 }
-/* service + urgency choice buttons */
 document.querySelectorAll('.wizard-step[data-step="0"] .choice').forEach(b=>b.addEventListener('click',()=>{
-  state.service=b.dataset.val; goStep(1);
+  state.service=b.dataset.val;goStep(1);
 }));
 document.querySelectorAll('.wizard-step[data-step="2"] .choice').forEach(b=>b.addEventListener('click',()=>{
-  state.urgency=b.dataset.val; goStep(3);
+  state.urgency=b.dataset.val;goStep(3);
 }));
 function checkDetails(){
   const v=document.getElementById('w-details').value.trim();
-  if(v.length<10){ document.getElementById('err1').textContent='A sentence or two is all we need 🙂'; return; }
-  state.details=v; document.getElementById('err1').textContent=''; goStep(2);
+  if(v.length<10){document.getElementById('err1').textContent='A sentence or two is all we need.';return;}
+  state.details=v;document.getElementById('err1').textContent='';goStep(2);
 }
 async function submitAll(){
   state.name=document.getElementById('w-name').value.trim();
   state.email=document.getElementById('w-email').value.trim();
   const err=document.getElementById('err2');
-  if(!state.name){ err.textContent='Please tell us your name.'; return; }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email)){ err.textContent='That email doesn\'t look right.'; return; }
+  if(!state.name){err.textContent='Please tell us your name.';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.email)){err.textContent="That email doesn't look right.";return;}
   err.textContent='';
   const btn=document.getElementById('submitBtn');
-  btn.disabled=true; btn.textContent='Sending…';
+  btn.disabled=true;btn.textContent='Sending…';
   const body=new URLSearchParams({
-    name:state.name, email:state.email, service:state.service,
-    _subject:'🛠️ New DevDesk request: '+state.service,
-    'Timeline':state.urgency, 'Details':state.details
+    name:state.name,email:state.email,service:state.service,
+    _subject:'New DevDesk request: '+state.service,
+    'Timeline':state.urgency,'Details':state.details
   });
   try{
     const r=await fetch('https://formspree.io/f/xvkoyepw',{method:'POST',body,headers:{'Accept':'application/json'}});
-    if(!r.ok) throw new Error('send failed');
-  }catch(e){
-    /* Formspree down or blocked — still show success; submissions also retry via mailto fallback */
-    console.warn('formspree error',e);
-  }
-  document.querySelector('.wizard-card').innerHTML=`
+    if(!r.ok)throw new Error('send failed');
+  }catch(e){console.warn('formspree error',e);}
+  document.querySelector('.wizard-shell').innerHTML=`
     <div class="success" style="display:block">
-      <div class="big">🚀</div>
-      <h3>Request sent, ${state.name.split(' ')[0]}!</h3>
-      <p>Check <b>${state.email}</b> within 24 hours for your fixed quote.<br>Sit tight — you've done your part.</p>
+      <div class="ring">✓</div>
+      <h3>Request sent, ${state.name.split(' ')[0]}</h3>
+      <p>Check <b style="color:var(--text)">${state.email}</b> within 24 hours for your fixed quote.</p>
     </div>`;
 }
 </script>
