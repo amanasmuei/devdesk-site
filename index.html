@@ -417,6 +417,9 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
 <script>
 /* nav solidify on scroll */
 const navEl=document.getElementById('topnav');
@@ -457,20 +460,23 @@ async function submitAll(){
   err.textContent='';
   const btn=document.getElementById('submitBtn');
   btn.disabled=true;btn.textContent='Sending…';
-  const body=new URLSearchParams({
+  const client=getSupabaseClient();
+  const {error}=await client.from('requests').insert({
     name:state.name,email:state.email,service:state.service,
-    _subject:'New DevDesk request: '+state.service,
-    'Timeline':state.urgency,'Details':state.details
+    urgency:state.urgency,details:state.details
   });
-  try{
-    const r=await fetch('https://formspree.io/f/xvkoyepw',{method:'POST',body,headers:{'Accept':'application/json'}});
-    if(!r.ok)throw new Error('send failed');
-  }catch(e){console.warn('formspree error',e);}
+  if(error){
+    console.warn('supabase insert error',error);
+    btn.disabled=false;btn.textContent='Get my free quote';
+    err.textContent='Something went wrong sending your request. Please try again, or email us directly at amanasmuei@gmail.com.';
+    return;
+  }
+  client.auth.signInWithOtp({email:state.email}).catch(e=>console.warn('magic link send failed',e));
   document.querySelector('.wizard-shell').innerHTML=`
     <div class="success" style="display:block">
       <div class="ring">✓</div>
       <h3>Request sent, ${state.name.split(' ')[0]}</h3>
-      <p>Check <b style="color:var(--text)">${state.email}</b> within 24 hours for your fixed quote.</p>
+      <p>Check <b style="color:var(--text)">${state.email}</b> for a login link to track your request's status, and your fixed quote within 24 hours.</p>
     </div>`;
 }
 </script>

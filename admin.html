@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevDesk — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c11; --surface:#10131b; --border:rgba(255,255,255,.07);
+    --text:#f4f6fb; --muted:#98a2b8; --faint:#667085; --radius:14px;
+    --accent:#7c8cff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:0 auto;padding:48px 24px}
+  h1{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;margin-bottom:20px}
+  input[type=email]{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);
+    color:var(--text);border-radius:12px;padding:14px 16px;font-size:16px;font-family:inherit;outline:none}
+  input:focus{border-color:var(--accent)}
+  .btn{margin-top:12px;display:inline-block;padding:12px 22px;border-radius:11px;font-weight:700;
+    background:#fff;color:#0a0c11;border:none;cursor:pointer;font-size:.9rem;font-family:inherit}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .msg{margin-top:14px;font-size:.88rem;color:var(--muted)}
+  .msg.error{color:#f97066}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th,td{border-bottom:1px solid var(--border);padding:10px 8px;text-align:left;vertical-align:top}
+  th{color:var(--faint);font-weight:600;text-transform:uppercase;font-size:.72rem;letter-spacing:.06em}
+  select,input[type=number],input[type=date],textarea.notes{
+    background:var(--surface);border:1px solid var(--border);color:var(--text);
+    border-radius:8px;padding:6px 8px;font-size:.85rem;font-family:inherit;width:100%}
+  textarea.notes{min-height:44px;resize:vertical}
+  .rowmsg{font-size:.78rem;color:var(--faint);margin-top:4px}
+  .rowmsg.error{color:#f97066}
+  .savebtn{padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;
+    color:var(--text);cursor:pointer;font-size:.8rem;font-family:inherit}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>DevDesk admin</h1>
+
+  <div id="loginBox">
+    <input type="email" id="loginEmail" placeholder="you@example.com">
+    <br><button class="btn" id="loginBtn">Send login link</button>
+    <p class="msg" id="loginMsg"></p>
+  </div>
+
+  <p class="msg error" id="deniedMsg" hidden>Not authorized for this page.</p>
+
+  <div id="tableBox" hidden>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Submitted</th><th>Client</th><th>Service</th><th>Details</th>
+            <th>Urgency</th><th>Status</th><th>Quote (RM)</th><th>Quote date</th>
+            <th>Notes</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script>
+const client=getSupabaseClient();
+const STATUSES=['submitted','quoted','in_progress','delivered','declined'];
+
+const loginBox=document.getElementById('loginBox');
+const deniedMsg=document.getElementById('deniedMsg');
+const tableBox=document.getElementById('tableBox');
+const loginMsg=document.getElementById('loginMsg');
+const loginBtn=document.getElementById('loginBtn');
+
+loginBtn.addEventListener('click',async()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    loginMsg.classList.add('error');loginMsg.textContent="That email doesn't look right.";return;
+  }
+  loginBtn.disabled=true;loginMsg.classList.remove('error');loginMsg.textContent='Sending…';
+  const{error}=await client.auth.signInWithOtp({email});
+  loginBtn.disabled=false;
+  if(error){loginMsg.classList.add('error');loginMsg.textContent='Could not send link. Please try again.';return;}
+  loginMsg.textContent='Check your inbox for a login link.';
+});
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function rowHtml(r){
+  return `
+    <tr data-id="${r.id}">
+      <td>${new Date(r.created_at).toLocaleDateString()}</td>
+      <td>${escapeHtml(r.name)}<br><span style="color:var(--faint)">${escapeHtml(r.email)}</span></td>
+      <td>${escapeHtml(r.service)}</td>
+      <td style="max-width:260px">${escapeHtml(r.details)}</td>
+      <td>${escapeHtml(r.urgency)}</td>
+      <td><select class="f-status">${STATUSES.map(s=>`<option value="${s}" ${s===r.status?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td><input class="f-price" type="number" step="0.01" value="${r.quote_price??''}"></td>
+      <td><input class="f-date" type="date" value="${r.quote_date??''}"></td>
+      <td><textarea class="f-notes notes">${escapeHtml(r.admin_notes??'')}</textarea></td>
+      <td><button class="savebtn">Save</button><p class="rowmsg"></p></td>
+    </tr>`;
+}
+
+function wireRow(tr,id){
+  tr.querySelector('.savebtn').addEventListener('click',async()=>{
+    const rowmsg=tr.querySelector('.rowmsg');
+    const patch={
+      status:tr.querySelector('.f-status').value,
+      quote_price:tr.querySelector('.f-price').value===''?null:Number(tr.querySelector('.f-price').value),
+      quote_date:tr.querySelector('.f-date').value||null,
+      admin_notes:tr.querySelector('.f-notes').value||null,
+    };
+    rowmsg.classList.remove('error');rowmsg.textContent='Saving…';
+    const{error}=await client.from('requests').update(patch).eq('id',id);
+    if(error){rowmsg.classList.add('error');rowmsg.textContent='Save failed. Try again.';return;}
+    rowmsg.textContent='Saved.';
+  });
+}
+
+async function loadAdmin(){
+  const{data,error}=await client.from('requests_view')
+    .select('id, name, email, service, urgency, details, status, quote_price, quote_date, admin_notes, created_at')
+    .order('created_at',{ascending:false});
+  if(error){tableBox.hidden=true;deniedMsg.hidden=false;return;}
+  const tbody=document.getElementById('rows');
+  tbody.innerHTML=data.map(rowHtml).join('');
+  data.forEach(r=>wireRow(tbody.querySelector(`tr[data-id="${r.id}"]`),r.id));
+  tableBox.hidden=false;
+}
+
+async function handleSession(){
+  loginBox.hidden=true;
+  const{data:isAdmin,error}=await client.rpc('is_admin');
+  if(error||!isAdmin){deniedMsg.hidden=false;return;}
+  await loadAdmin();
+}
+
+client.auth.onAuthStateChange((_e,session)=>{if(session&&session.user)handleSession();});
+client.auth.getSession().then(({data})=>{if(data.session&&data.session.user)handleSession();});
+</script>
+</body>
+</html>
