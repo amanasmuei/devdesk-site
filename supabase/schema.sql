@@ -92,8 +92,7 @@ revoke select on public.requests from anon, authenticated;
 
 -- requests_view: security-definer view that nulls admin_notes for non-admins.
 -- Clients and admins query this view; Tasks 4-5 (portal.html, admin.html) use it for all reads.
-create view public.requests_view
-with (security_invoker = false) as
+create view public.requests_view as
 select
   id, client_id, email, name, service, urgency, details, status,
   quote_price, quote_date, created_at, updated_at,
