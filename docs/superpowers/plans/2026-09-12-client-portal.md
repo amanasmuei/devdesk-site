@@ -183,7 +183,7 @@ One-time setup for the client portal / admin panel backend.
    This is the only way to grant admin — there is no UI for it.
 ```
 
-- [ ] **Step 3: Run the schema and verify in the dashboard**
+- [x] **Step 3: Run the schema and verify in the dashboard**
 
 In the Supabase SQL Editor, run the full contents of `schema.sql`.
 
@@ -227,7 +227,7 @@ function getSupabaseClient() {
 }
 ```
 
-- [ ] **Step 2: Fill in real project credentials**
+- [x] **Step 2: Fill in real project credentials**
 
 Replace `SUPABASE_URL` and `SUPABASE_ANON_KEY` above with the actual
 values from the Supabase project created in Task 1 (Project Settings →
@@ -235,7 +235,7 @@ API → "Project URL" and "anon public" key). The anon key is meant to be
 public/client-side; access is controlled entirely by the RLS policies
 from Task 1, not by keeping this key secret.
 
-- [ ] **Step 3: Verify the client initializes**
+- [x] **Step 3: Verify the client initializes**
 
 Create a throwaway `test.html` next to it:
 
@@ -330,7 +330,7 @@ insert failure now blocks the success screen (matching the error-handling
 already fixed in a prior change), and the magic-link send is fire-and-forget
 since a failed send should never block a saved request.
 
-- [ ] **Step 3: Manually verify the submission**
+- [x] **Step 3: Manually verify the submission**
 
 Run `python3 -m http.server 8000`, open `http://localhost:8000/index.html`,
 scroll to the wizard, complete all four steps with a real email you can
@@ -342,7 +342,7 @@ entered and `status = submitted`. Authentication → Users shows a new (or
 existing) user for that email. Your inbox receives a magic-link sign-in
 email from Supabase.
 
-- [ ] **Step 4: Verify the failure path still works**
+- [x] **Step 4: Verify the failure path still works**
 
 Temporarily change `SUPABASE_URL` in `supabase-config.js` to an invalid
 value (e.g. append `x` to it), reload, and submit the wizard again.
