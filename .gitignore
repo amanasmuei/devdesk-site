@@ -4,3 +4,4 @@
 # local preview/screenshot artifacts (regenerable, not site assets)
 *-preview.png
 *-fixed.png
+revamp-*.png
